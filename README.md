@@ -2,7 +2,7 @@
 
 Public agent skills maintained by `lgldlk`.
 
-This repository currently contains one self-owned skill: **API Data Research**. It helps an agent compare official and third-party data APIs by reading documentation, extracting exact fields, checking access limits, and producing decision-ready capability matrices.
+This repository contains self-owned skills for research and implementation workflows. Each skill is designed to be installable, inspectable, and useful on its own.
 
 ![API Data Research capability matrix](assets/screenshots/api-data-research-matrix.png)
 
@@ -11,6 +11,7 @@ This repository currently contains one self-owned skill: **API Data Research**. 
 | Skill | What it does | Best for | Included resources |
 |---|---|---|---|
 | [`api-data-research`](skills/api-data-research/SKILL.md) | Verifies official and third-party API capabilities from docs, schemas, examples, pricing pages, and stability/community signals. | API vendor comparison, social/content data access research, field-level capability matrices, cited Markdown reports, table-to-image exports. | `SKILL.md`, OpenAI UI metadata, and a PNG renderer for Markdown capability tables. |
+| [`miniapp-figma-alignment`](skills/miniapp-figma-alignment/SKILL.md) | Aligns mini-program, uni-app, Taro, and other mini-app pages to Figma with correct frame-width scaling, rpx conversion, platform chrome handling, and visual QA. | Fixing mini-program screens that look too small, too large, or misaligned after translating Figma designs into code. | `SKILL.md` and OpenAI UI metadata. |
 
 ## API Data Research
 
@@ -47,18 +48,52 @@ Typical Markdown output includes:
 - source links and evidence levels
 - pricing, access scope, stability, and operating-year basis
 
+## Miniapp Figma Alignment
+
+Use this skill when a mini-program UI needs to match Figma precisely. It helps the agent avoid common mobile mini-app mistakes:
+
+- treating Figma pixels as CSS pixels
+- assuming every Figma frame is `750` wide
+- mixing final `rpx` values with Taro `pxtransform`
+- forgetting that JS inline styles are not transformed by compile-time plugins
+- redrawing native status bars, menu capsules, or platform chrome
+- ignoring safe-area and fixed-bottom layout behavior
+
+It starts by detecting the framework and unit pipeline, then computes the correct scale:
+
+```text
+scale = targetDesignWidth / figmaFrameWidth
+targetValue = figmaPx * scale
+```
+
+For example, if the Figma frame is `390px` wide and the target mini-program design width is `750rpx`, the scale is:
+
+```text
+750 / 390 = 1.9231
+```
+
+See [`examples/miniapp-figma-alignment-example.md`](examples/miniapp-figma-alignment-example.md) for the expected reasoning and report shape.
+
 ## Install
+
+List available skills:
+
+```bash
+npx skills add lgldlk/personal-agent-skills --list
+```
 
 Install with an Agent Skills compatible installer:
 
 ```bash
 npx skills add lgldlk/personal-agent-skills --skill api-data-research -g -a codex -y
+npx skills add lgldlk/personal-agent-skills --skill miniapp-figma-alignment -g -a codex -y
 ```
 
-Or copy the skill folder manually:
+Or copy skill folders manually:
 
 ```bash
 cp -R skills/api-data-research ~/.codex/skills/
+cp -R skills/miniapp-figma-alignment ~/.codex/skills/
 ```
 
 Then start a new Codex session so the skill metadata is loaded.
@@ -71,15 +106,20 @@ personal-agent-skills/
 │   └── screenshots/
 │       └── api-data-research-matrix.png
 ├── examples/
-│   └── api-data-research-example.md
+│   ├── api-data-research-example.md
+│   └── miniapp-figma-alignment-example.md
 ├── skills/
 │   ├── index.json
-│   └── api-data-research/
+│   ├── api-data-research/
+│   │   ├── SKILL.md
+│   │   ├── agents/
+│   │   │   └── openai.yaml
+│   │   └── scripts/
+│   │       └── render_markdown_table_png.py
+│   └── miniapp-figma-alignment/
 │       ├── SKILL.md
-│       ├── agents/
-│       │   └── openai.yaml
-│       └── scripts/
-│           └── render_markdown_table_png.py
+│       └── agents/
+│           └── openai.yaml
 ├── scripts/
 │   └── validate-skills.sh
 ├── docs/
@@ -108,7 +148,7 @@ scripts/validate-skills.sh
 Current validation result:
 
 ```text
-OK: validated 1 skill(s)
+OK: validated 2 skill(s)
 ```
 
 ## License

@@ -1,6 +1,6 @@
 # Release Checklist
 
-- [ ] README lists all public skills.
+- [ ] README and `docs/install.md` list all public skills.
 - [ ] `skills/index.json` matches the `skills/` directory.
 - [ ] Every `SKILL.md` has only `name` and `description` in frontmatter.
 - [ ] Every `description` describes concrete trigger scenarios.

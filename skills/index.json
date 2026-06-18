@@ -6,5 +6,13 @@
     "summary": "Research and compare official and third-party API data access, verify exact fields from docs, and produce capability matrices.",
     "risk": "external-source-verification",
     "public": true
+  },
+  {
+    "name": "miniapp-figma-alignment",
+    "category": "frontend",
+    "path": "skills/miniapp-figma-alignment",
+    "summary": "Align mini-program, uni-app, Taro, and other mini-app pages to Figma designs using correct frame-width scaling, rpx conversion, platform chrome handling, and visual QA.",
+    "risk": "project-specific-visual-implementation",
+    "public": true
   }
 ]

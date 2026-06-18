@@ -1,0 +1,4 @@
+interface:
+  display_name: "Miniapp Figma Alignment"
+  short_description: "Align mini-program UI to Figma accurately."
+  default_prompt: "Use $miniapp-figma-alignment to align this mini-program page to the Figma design, including framework detection, frame-width scaling, rpx conversion, platform chrome handling, and verification."
