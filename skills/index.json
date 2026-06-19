@@ -14,5 +14,13 @@
     "summary": "Align mini-program, uni-app, Taro, and other mini-app pages to Figma designs using correct frame-width scaling, rpx conversion, platform chrome handling, and visual QA.",
     "risk": "project-specific-visual-implementation",
     "public": true
+  },
+  {
+    "name": "xiaohongshu-content-parser",
+    "category": "content-data",
+    "path": "skills/xiaohongshu-content-parser",
+    "summary": "Parse public Xiaohongshu share links through the BugPk xhsjx API and normalize title, description, author, avatar, cover, image URLs, video URLs, backup links, live photo data, and unsupported metric availability.",
+    "risk": "third-party-public-parser-api",
+    "public": true
   }
 ]

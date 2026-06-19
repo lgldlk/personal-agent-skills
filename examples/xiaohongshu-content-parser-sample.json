@@ -1,0 +1,27 @@
+{
+  "code": 200,
+  "msg": "解析成功",
+  "data": {
+    "type": "image",
+    "title": "Demo note title",
+    "desc": "This is a demo note body. #demo[话题]# #sample[话题]#",
+    "author": {
+      "name": "Demo Author",
+      "id": "demo-user-id",
+      "avatar": "https://example.com/demo-avatar.jpg"
+    },
+    "cover": "https://example.com/demo-cover.jpg",
+    "images": [
+      "https://example.com/demo-image-1.jpg",
+      "https://example.com/demo-image-2.jpg"
+    ],
+    "live_photo": [],
+    "video_backup": []
+  },
+  "cache_status": "demo",
+  "bktip": {
+    "Auther": "BugPk-Api",
+    "website": "https://api.bugpk.com/",
+    "tip": "demo response for documentation only"
+  }
+}
