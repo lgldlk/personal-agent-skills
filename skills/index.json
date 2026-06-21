@@ -16,6 +16,22 @@
     "public": true
   },
   {
+    "name": "markdown-platform-pack",
+    "category": "content-tooling",
+    "path": "skills/markdown-platform-pack",
+    "summary": "Convert Markdown articles into platform-ready Word packages by rasterizing tables and fenced code blocks, rewriting a temporary Markdown file, and exporting a local docx file for Xiaohongshu or WeChat import flows.",
+    "risk": "local-document-export",
+    "public": true
+  },
+  {
+    "name": "agent-pipeline-orchestration",
+    "category": "coordination",
+    "path": "skills/agent-pipeline-orchestration",
+    "summary": "Manage coding or research work as a non-blocking multi-agent pipeline with bounded lanes for implementation, review, QA, and next-phase mapping.",
+    "risk": "multi-agent-coordination",
+    "public": true
+  },
+  {
     "name": "xiaohongshu-content-parser",
     "category": "content-data",
     "path": "skills/xiaohongshu-content-parser",

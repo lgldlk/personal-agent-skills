@@ -11,7 +11,9 @@
 | 技能 | 用途 | 主要产物 |
 |---|---|---|
 | [`api-data-research`](skills/api-data-research/SKILL.md) | 从文档、响应样例、价格页、稳定性和社区信号中对比官方及第三方 API 数据能力。 | 带引用的调研笔记、字段级能力矩阵、PNG 表格导出。 |
+| [`agent-pipeline-orchestration`](skills/agent-pipeline-orchestration/SKILL.md) | 把工作拆成非阻塞的多 agent 流水线，包含实现、评审、QA 和下一阶段映射。 | 流水线分工、worker 提示词和集成说明。 |
 | [`miniapp-figma-alignment`](skills/miniapp-figma-alignment/SKILL.md) | 修正或实现小程序、uni-app、Taro 页面，让它们和 Figma 尺寸及平台行为对齐。 | 单位换算判断、实现建议、视觉 QA 清单。 |
+| [`markdown-platform-pack`](skills/markdown-platform-pack/SKILL.md) | 把 Markdown 转成适合平台导入的 Word 包，先把表格和代码块转成图片。 | `*.tmp.md`、PNG 块图片、`*.docx` 导入文件。 |
 | [`xiaohongshu-content-parser`](skills/xiaohongshu-content-parser/SKILL.md) | 解析公开小红书分享链接，保存正文和元数据，并下载图文媒体。 | `report.md`、`normalized.json`、`raw.json` 和本地媒体文件。 |
 
 ## 快速安装
@@ -26,7 +28,9 @@ npx skills add lgldlk/lgldlk-agent-skills --list
 
 ```bash
 npx skills add lgldlk/lgldlk-agent-skills --skill api-data-research -g -a codex -y
+npx skills add lgldlk/lgldlk-agent-skills --skill agent-pipeline-orchestration -g -a codex -y
 npx skills add lgldlk/lgldlk-agent-skills --skill miniapp-figma-alignment -g -a codex -y
+npx skills add lgldlk/lgldlk-agent-skills --skill markdown-platform-pack -g -a codex -y
 npx skills add lgldlk/lgldlk-agent-skills --skill xiaohongshu-content-parser -g -a codex -y
 ```
 
@@ -35,7 +39,9 @@ npx skills add lgldlk/lgldlk-agent-skills --skill xiaohongshu-content-parser -g 
 ```bash
 mkdir -p ~/.codex/skills
 cp -R skills/api-data-research ~/.codex/skills/
+cp -R skills/agent-pipeline-orchestration ~/.codex/skills/
 cp -R skills/miniapp-figma-alignment ~/.codex/skills/
+cp -R skills/markdown-platform-pack ~/.codex/skills/
 cp -R skills/xiaohongshu-content-parser ~/.codex/skills/
 ```
 

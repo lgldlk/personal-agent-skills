@@ -1,0 +1,7 @@
+interface:
+  display_name: "Markdown Platform Pack"
+  short_description: "把 Markdown 转成平台可导入的 Word 包"
+  default_prompt: "Use $markdown-platform-pack to convert a Markdown article into a platform-ready Word file by rasterizing tables and code blocks first."
+
+policy:
+  allow_implicit_invocation: true

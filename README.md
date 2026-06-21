@@ -11,7 +11,9 @@ These skills come from recurring real workflows: researching API data access, al
 | Skill | Purpose | Main output |
 |---|---|---|
 | [`api-data-research`](skills/api-data-research/SKILL.md) | Compare official and third-party API data access from docs, response examples, pricing pages, and stability signals. | Cited research notes, field-level capability matrices, PNG table exports. |
+| [`agent-pipeline-orchestration`](skills/agent-pipeline-orchestration/SKILL.md) | Manage work as a non-blocking multi-agent pipeline with bounded implementation, review, QA, and mapping lanes. | Lane planning, worker prompts, and integration guidance. |
 | [`miniapp-figma-alignment`](skills/miniapp-figma-alignment/SKILL.md) | Implement or fix mini-program, uni-app, or Taro screens so they match Figma dimensions and platform behavior. | Unit conversion decisions, implementation guidance, visual QA checklist. |
+| [`markdown-platform-pack`](skills/markdown-platform-pack/SKILL.md) | Convert Markdown into platform-ready Word output by rasterizing unsupported tables and code blocks first. | `*.tmp.md`, PNG block images, `*.docx` import files. |
 | [`xiaohongshu-content-parser`](skills/xiaohongshu-content-parser/SKILL.md) | Parse a public Xiaohongshu share URL, save the post text and metadata, and download media locally. | `report.md`, `normalized.json`, `raw.json`, and local media files. |
 
 ## Quick Install
@@ -26,7 +28,9 @@ Install a specific skill:
 
 ```bash
 npx skills add lgldlk/lgldlk-agent-skills --skill api-data-research -g -a codex -y
+npx skills add lgldlk/lgldlk-agent-skills --skill agent-pipeline-orchestration -g -a codex -y
 npx skills add lgldlk/lgldlk-agent-skills --skill miniapp-figma-alignment -g -a codex -y
+npx skills add lgldlk/lgldlk-agent-skills --skill markdown-platform-pack -g -a codex -y
 npx skills add lgldlk/lgldlk-agent-skills --skill xiaohongshu-content-parser -g -a codex -y
 ```
 
@@ -35,7 +39,9 @@ Manual install:
 ```bash
 mkdir -p ~/.codex/skills
 cp -R skills/api-data-research ~/.codex/skills/
+cp -R skills/agent-pipeline-orchestration ~/.codex/skills/
 cp -R skills/miniapp-figma-alignment ~/.codex/skills/
+cp -R skills/markdown-platform-pack ~/.codex/skills/
 cp -R skills/xiaohongshu-content-parser ~/.codex/skills/
 ```
 
@@ -74,6 +80,22 @@ Checks:
 ```
 
 Source example: [`examples/miniapp-figma-alignment-example.md`](examples/miniapp-figma-alignment-example.md)
+
+### Markdown Platform Pack
+
+This skill converts Markdown articles into platform-ready Word packages by rasterizing unsupported tables and code blocks first.
+
+Minimal result shape:
+
+```text
+article.xiaohongshu.tmp.md
+assets/
+  article-table-1.png
+  article-code-1.png
+article.xiaohongshu.docx
+```
+
+Source example: use the local `markdown-platform-pack` skill directory.
 
 ### Xiaohongshu Content Parser
 

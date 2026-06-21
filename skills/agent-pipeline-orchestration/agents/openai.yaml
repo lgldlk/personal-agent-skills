@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agent Pipeline Orchestration"
+  short_description: "Run multi-agent coding work as a non-blocking pipeline."
+  default_prompt: "Use this skill to manage a multi-agent coding task as parallel implementation, review, QA, and discovery lanes."
