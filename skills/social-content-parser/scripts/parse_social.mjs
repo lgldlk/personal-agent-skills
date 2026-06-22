@@ -20,6 +20,11 @@ const PLATFORMS = {
     secondaryEndpoint: 'https://uapis.cn/api/v1/social/bilibili/videoinfo',
     fallbackEndpoint: 'https://api.bugpk.com/api/short_videos',
     hosts: ['bilibili.com', 'b23.tv']
+  },
+  twitter: {
+    endpoint: 'https://api.fxtwitter.com',
+    fallbackEndpoint: 'https://api.bugpk.com/api/short_videos',
+    hosts: ['x.com', 'twitter.com', 'mobile.twitter.com', 'm.twitter.com']
   }
 };
 
@@ -83,6 +88,7 @@ function normalizePlatform(value) {
   if (['xhs', 'xiaohongshu', 'rednote'].includes(key)) return 'xiaohongshu';
   if (['dy', 'douyin', 'tiktok-cn'].includes(key)) return 'douyin';
   if (['bili', 'bilibili', 'b23'].includes(key)) return 'bilibili';
+  if (['x', 'twitter', 'fxtwitter'].includes(key)) return 'twitter';
   return key;
 }
 
@@ -127,6 +133,14 @@ function inferKind(platform, payload, sourceUrl, explicitKind = 'auto') {
 }
 
 function apiUrlFor({ platform, sourceUrl, kind = 'auto', count = 10, id = '' }) {
+  if (platform === 'twitter') {
+    const raw = sourceUrl || '';
+    const match = raw.match(/x\.com\/([^/]+)\/status\/(\d+)/i)
+      || raw.match(/twitter\.com\/([^/]+)\/status\/(\d+)/i);
+    if (!match) throw new Error(`Unsupported X/Twitter URL: ${raw}`);
+    const [, screenName, statusId] = match;
+    return `${PLATFORMS.twitter.endpoint}/${screenName}/status/${statusId}`;
+  }
   const resolvedKind = platform === 'douyin' && id && normalizeKind(kind) === 'auto'
     ? 'profile'
     : platform === 'douyin'
@@ -261,6 +275,14 @@ function extractSourceId(platform, sourceUrl, data) {
       return data?.bvid || data?.aid || '';
     }
   }
+  if (platform === 'twitter') {
+    try {
+      const u = new URL(sourceUrl);
+      return u.pathname.match(/\/status\/(\d+)(?:\/|$)/)?.[1] || '';
+    } catch {
+      return '';
+    }
+  }
   try {
     const u = new URL(sourceUrl);
     return u.pathname.match(/\/explore\/([^/]+)/)?.[1] || '';
@@ -292,6 +314,112 @@ function normalizeLivePhoto(value) {
         video: item?.video ?? ''
       }))
     : [];
+}
+
+function shortenText(value, limit = 80) {
+  const text = String(value || '').replace(/\s+/g, ' ').trim();
+  if (!text) return '';
+  if (text.length <= limit) return text;
+  return `${text.slice(0, Math.max(0, limit - 1)).trimEnd()}…`;
+}
+
+function normalizeTwitterArticle(article) {
+  if (!article) return null;
+  if (typeof article === 'string') {
+    return { title: '', text: article, url: '' };
+  }
+  return {
+    title: article.title ?? article.headline ?? '',
+    text: article.text ?? article.content ?? article.body ?? '',
+    url: article.url ?? article.link ?? '',
+    raw: article
+  };
+}
+
+function normalizeTwitterTweet(tweet) {
+  if (!tweet) return null;
+  const article = normalizeTwitterArticle(tweet.article);
+  const photos = Array.isArray(tweet?.media?.photos)
+    ? tweet.media.photos.filter(Boolean).map((item) => ({
+        url: item?.url ?? '',
+        width: item?.width ?? null,
+        height: item?.height ?? null
+      }))
+    : [];
+  const videos = Array.isArray(tweet?.media?.videos)
+    ? tweet.media.videos.filter(Boolean).map((item) => ({
+        url: item?.url ?? '',
+        thumbnailUrl: item?.thumbnail_url ?? '',
+        width: item?.width ?? null,
+        height: item?.height ?? null,
+        duration: item?.duration ?? null,
+        format: item?.format ?? '',
+        type: item?.type ?? ''
+      }))
+    : [];
+  const external = tweet?.media?.external
+    ? {
+        type: tweet.media.external?.type ?? '',
+        url: tweet.media.external?.url ?? '',
+        width: tweet.media.external?.width ?? null,
+        height: tweet.media.external?.height ?? null,
+        duration: tweet.media.external?.duration ?? null
+      }
+    : null;
+  const primaryVideo = videos[0]?.url || external?.url || '';
+  const images = photos.map((item) => item.url).filter(Boolean);
+  const allMedia = [
+    ...photos.map((item) => ({ type: 'photo', ...item })),
+    ...videos.map((item) => ({ type: item.type || 'video', ...item })),
+    ...(external ? [{ ...external }] : [])
+  ];
+  const type = article?.title || article?.text
+    ? 'article'
+    : primaryVideo
+      ? 'video'
+      : images.length
+        ? 'image'
+        : tweet.twitter_card || 'tweet';
+
+  return {
+    id: tweet.id ?? '',
+    url: tweet.url ?? '',
+    text: tweet.text ?? '',
+    createdAt: tweet.created_at ?? '',
+    createdTimestamp: tweet.created_timestamp ?? null,
+    author: {
+      name: tweet.author?.name ?? '',
+      id: tweet.author?.screen_name ?? '',
+      avatar: tweet.author?.avatar_url ?? '',
+      banner: tweet.author?.banner_url ?? ''
+    },
+    replies: tweet.replies ?? null,
+    retweets: tweet.retweets ?? null,
+    likes: tweet.likes ?? null,
+    views: tweet.views ?? null,
+    twitterCard: tweet.twitter_card ?? '',
+    lang: tweet.lang ?? '',
+    source: tweet.source ?? '',
+    replyingTo: tweet.replying_to ?? null,
+    replyingToStatus: tweet.replying_to_status ?? null,
+    article,
+    media: {
+      photos,
+      videos,
+      external,
+      all: allMedia
+    },
+    title: article?.title || shortenText(tweet.text || article?.text || 'X/Twitter post', 96),
+    desc: article?.text || tweet.text || '',
+    cover: images[0] || videos[0]?.thumbnailUrl || tweet.author?.avatar_url || '',
+    primaryVideo,
+    images,
+    videoBackups: [
+      ...videos.slice(1).map((item) => item.url).filter(Boolean),
+      ...(external?.url ? [external.url] : [])
+    ],
+    type
+  };
 }
 
 function normalizeParts(platform, data) {
@@ -485,6 +613,66 @@ function normalizeBilibiliSecondary(payload, sourceUrl, canonicalUrl) {
   };
 }
 
+function normalizeTwitterPrimary(payload, sourceUrl, canonicalUrl) {
+  const tweet = payload?.tweet || {};
+  const normalizedTweet = normalizeTwitterTweet(tweet) || {};
+  return {
+    platform: 'twitter',
+    kind: 'post',
+    sourceUrl,
+    canonicalUrl,
+    code: payload?.code ?? null,
+    msg: payload?.message ?? payload?.msg ?? '',
+    type: normalizedTweet.type || 'tweet',
+    title: normalizedTweet.title || 'X/Twitter post',
+    desc: normalizedTweet.desc || '',
+    author: {
+      name: normalizedTweet.author?.name ?? '',
+      id: normalizedTweet.author?.id ?? '',
+      avatar: normalizedTweet.author?.avatar ?? ''
+    },
+    cover: normalizedTweet.cover || '',
+    primaryVideo: normalizedTweet.primaryVideo || '',
+    videoBackups: normalizedTweet.videoBackups || [],
+    images: normalizedTweet.images || [],
+    livePhoto: [],
+    music: {},
+    statistics: {
+      replies: normalizedTweet.replies ?? null,
+      retweets: normalizedTweet.retweets ?? null,
+      likes: normalizedTweet.likes ?? null,
+      views: normalizedTweet.views ?? null
+    },
+    parts: [],
+    totalVideos: 0,
+    items: [],
+    pagination: {},
+    createdAt: normalizedTweet.createdAt || '',
+    createdTimestamp: normalizedTweet.createdTimestamp ?? null,
+    twitterCard: normalizedTweet.twitterCard || '',
+    lang: normalizedTweet.lang || '',
+    source: normalizedTweet.source || '',
+    replyingTo: normalizedTweet.replyingTo ?? null,
+    replyingToStatus: normalizedTweet.replyingToStatus ?? null,
+    article: normalizedTweet.article || null,
+    media: normalizedTweet.media || { photos: [], videos: [], external: null, all: [] },
+    sourceId: extractSourceId('twitter', sourceUrl, tweet),
+    fallbackUsed: false,
+    supportedFields: [
+      'title',
+      'desc',
+      'author',
+      'cover',
+      'primaryVideo',
+      'videoBackups',
+      'images',
+      'article',
+      'statistics',
+      'createdAt'
+    ]
+  };
+}
+
 function normalizeFallbackPayload(platform, payload, sourceUrl, canonicalUrl) {
   const data = payload?.data || {};
   const authorName = data.author ?? data.user?.name ?? '';
@@ -551,6 +739,7 @@ function isUsablePrimaryPayload(platform, payload, kind) {
   const code = Number(payload.code);
   if (Number.isFinite(code) && code !== 200) return false;
   if (platform === 'douyin' && kind === 'profile') return Array.isArray(payload.data) && payload.data.length > 0;
+  if (platform === 'twitter') return Boolean(payload?.tweet?.id || payload?.tweet?.text || payload?.tweet?.url);
   if (platform === 'bilibili') {
     return Boolean(payload?.data?.title || payload?.data?.url || (Array.isArray(payload?.data?.videos) && payload.data.videos.length));
   }
@@ -558,6 +747,9 @@ function isUsablePrimaryPayload(platform, payload, kind) {
 }
 
 function normalizePayload(platform, payload, sourceUrl, kind = 'auto') {
+  if (platform === 'twitter') {
+    return normalizeTwitterPrimary(payload, sourceUrl, normalizeShareUrl(sourceUrl));
+  }
   const resolvedKind = inferKind(platform, payload, sourceUrl, kind);
   if (platform === 'douyin' && resolvedKind === 'profile') {
     return normalizeDouyinProfile(payload, sourceUrl);
@@ -646,7 +838,7 @@ async function fetchPrimaryOrFallback({ platform, sourceUrl, canonicalUrl, kind,
     }
   }
 
-  const fallbackSourceUrl = platform === 'xiaohongshu' ? sourceUrl || canonicalUrl : sourceUrl || canonicalUrl;
+  const fallbackSourceUrl = sourceUrl || canonicalUrl;
   const fallbackUrl = apiFallbackUrlFor(fallbackSourceUrl);
   const payload = await fetchWithRetry(fallbackUrl, retries);
   return { payload, mode: 'fallback' };
@@ -721,6 +913,21 @@ function buildReport(normalized, outDir, downloads) {
   const itemsText = normalized.items?.length
     ? normalized.items.map((item) => `- ${item.index ?? ''}. ${item.desc || item.title || '未命名'}（${item.type || '类型待确认'}，${item.createdAt || '时间待确认'}）`).join('\n')
     : '- 无';
+  const twitterSection = normalized.platform === 'twitter'
+    ? [
+        '## 推文信息',
+        `- 发布时间：${normalized.createdAt || '待确认'}`,
+        `- 卡片类型：${normalized.twitterCard || '待确认'}`,
+        `- 语言：${normalized.lang || '待确认'}`,
+        `- 来源：${normalized.source || '待确认'}`,
+        `- 回复数：${normalized.statistics?.replies ?? '待确认'}`,
+        `- 转推数：${normalized.statistics?.retweets ?? '待确认'}`,
+        `- 点赞数：${normalized.statistics?.likes ?? '待确认'}`,
+        `- 浏览数：${normalized.statistics?.views ?? '待确认'}`,
+        `- 长文：${normalized.article?.title || normalized.article?.text || '无'}`,
+        ''
+      ].join('\n')
+    : '';
 
   return [
     `# ${normalized.title || 'Social Content'}`,
@@ -751,6 +958,7 @@ function buildReport(normalized, outDir, downloads) {
     `- ID：${normalized.author.id || '待确认'}`,
     `- 头像：${normalized.author.avatar || '无'}`,
     '',
+    twitterSection,
     '## 资源',
     `- 封面：${normalized.cover || '无'}`,
     `- 主视频：${normalized.primaryVideo || '无'}`,
@@ -778,15 +986,17 @@ function buildReport(normalized, outDir, downloads) {
     '1. 自动识别链接平台。',
     '2. 先清理分享链接中的跟踪参数，只保留内容路径。',
     '3. 对抖音链接先判断主页或作品，再调用对应 BugPk API。',
-    '4. 主接口失手时，自动切到聚合解析兜底。',
-    '5. 保存原始响应。',
-    '6. 归一化核心字段。',
-    '7. 生成报告并按需下载媒体。',
+    '4. 对 X/Twitter 链接优先调用 FXTwitter，再按需回退到聚合解析。',
+    '5. 主接口失手时，自动切到聚合解析兜底。',
+    '6. 保存原始响应。',
+    '7. 归一化核心字段。',
+    '8. 生成报告并按需下载媒体。',
     '',
     '## 易错点',
     '- 不要把不同平台的字段名当成一致。',
     '- 分享链接常带 tracking 参数，先清理再解析更稳。',
     '- 抖音主页和抖音作品返回结构不同，主页是作品列表，作品页才有 `type=video/image/live`。',
+    '- X/Twitter 优先保留正文、作者、互动数据、媒体和长文内容。',
     '- 主接口失败时再用聚合兜底，不要反过来抢占主路径。',
     '- 直链可能会过期，长期归档应下载媒体文件。',
     '- 视频默认不下载，需要显式传入 `--download-video`。',

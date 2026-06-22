@@ -1,11 +1,11 @@
 ---
 name: social-content-parser
-description: Parse public short-video share URLs through BugPk public APIs, with an aggregated fallback that covers 20+ platforms including Douyin, Kuaishou, Xiaohongshu, Bilibili, YouTube, TikTok, Xigua, Haokan, Weishi, Pear Video, AcFun, Zhihu, Oasis, Meipai, Quanmin, Huya, X/Twitter, Instagram, Doubao, Jimeng AI, and WeChat Channels. Use when a user wants to extract or archive public short-video or social share links into local files, including cases where tracking parameters appear or the primary parser needs a fallback route.
+description: Parse public short-video and social share URLs through platform-specific APIs plus an aggregated fallback that covers 20+ platforms including Douyin, Kuaishou, Xiaohongshu, Bilibili, X/Twitter, YouTube, TikTok, Xigua, Haokan, Weishi, Pear Video, AcFun, Zhihu, Oasis, Meipai, Quanmin, Huya, Instagram, Doubao, Jimeng AI, and WeChat Channels. Use when a user wants to extract or archive public social links into local files, including cases where tracking parameters appear, X/Twitter posts need FXTwitter, or the primary parser needs a fallback route.
 ---
 
 # Social Content Parser
 
-Use this skill to turn a public short-video or social share URL into a local content package. Treat the aggregated fallback as the broad coverage layer; use the platform-specific routes when the link clearly belongs to Xiaohongshu, Douyin, or Bilibili.
+Use this skill to turn a public short-video or social share URL into a local content package. Treat the aggregated fallback as the broad coverage layer; use the platform-specific routes when the link clearly belongs to Xiaohongshu, Douyin, Bilibili, or X/Twitter.
 
 Supported platforms:
 
@@ -13,6 +13,7 @@ Supported platforms:
 - Douyin works via `https://api.bugpk.com/api/douyin`
 - Douyin profiles via `https://api.bugpk.com/api/dyzy`
 - Bilibili via `https://api.bugpk.com/api/bilibili`
+- X/Twitter via `https://api.fxtwitter.com/:screen_name/status/:id`
 - Aggregated fallback via `https://api.bugpk.com/api/short_videos` for 20+ platforms
 
 Fallback order:
@@ -104,6 +105,7 @@ node scripts/parse_social.mjs --from-file raw.json --platform douyin
 - Xiaohongshu: `desc` is the正文. `video_backup` may be a string or list.
 - Douyin profile: `/user/...` homepage links use `dyzy`; normalized output has `kind=profile`, `type=profile`, and an `items` list.
 - Douyin work: video, image, and live-photo share links use `douyin`; normalized output has `kind=post` and `type=video|image|live`. `live_photo` includes paired image/video values.
+- X/Twitter: the parser uses FXTwitter first, keeps tweet text, author info, media, metrics, and long-form article content when available, then falls back to the aggregated parser if needed.
 - Share links often contain tracking parameters; the parser keeps the content path and drops those extras before calling the API.
 - Do not assume every fallback wants the same cleaned URL; some fallback parsers prefer the original share link.
 - When the primary parser misses content, the skill can fall back to the aggregated short-video parser to recover a usable result.
