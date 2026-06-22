@@ -38,5 +38,13 @@
     "summary": "Auto-detect and parse public Xiaohongshu, Douyin, and Bilibili share links through BugPk public APIs, clean noisy share parameters, route Douyin profile and work links separately, and fall back to a general short-video parser when needed.",
     "risk": "third-party-public-parser-api",
     "public": true
+  },
+  {
+    "name": "ai-news-digest",
+    "category": "research",
+    "path": "skills/ai-news-digest",
+    "summary": "Fetch current AI news from RSS/Atom feeds, optional X and non-RSS sources, and GitHub AI trending, then produce a dated digest with links and trend notes.",
+    "risk": "external-source-verification",
+    "public": true
   }
 ]

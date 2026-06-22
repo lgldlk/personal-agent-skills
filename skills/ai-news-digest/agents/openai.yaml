@@ -1,0 +1,3 @@
+display_name: AI News Digest
+short_description: Fetch latest AI news from reputable sources and format a dated digest.
+default_prompt: 在输出任何摘要前，必须先运行本 skill 脚本抓取指定时间窗口内的最新新闻；用户未指定时默认过去 24 小时。不可凭记忆生成。抓取失败时先重试一次，再用 web.run 兜底并标注数据来源与时间窗口；完成后输出中文汇总（含日期、链接、趋势与建议）。

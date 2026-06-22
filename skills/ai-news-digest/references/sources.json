@@ -1,0 +1,40 @@
+{
+  "sources": [
+    { "name": "OpenAI Blog", "url": "https://openai.com/blog/rss.xml", "enabled": true, "tags": ["vendor", "product", "research"] },
+    { "name": "OpenAI News", "url": "https://openai.com/news/rss.xml", "enabled": true, "tags": ["vendor", "product", "policy"] },
+
+    { "name": "Google Blog (AI)", "url": "https://blog.google/technology/ai/rss/", "enabled": true, "tags": ["vendor", "product", "research"] },
+    { "name": "Microsoft Research Blog", "url": "https://www.microsoft.com/en-us/research/feed/", "enabled": true, "tags": ["vendor", "research"] },
+    { "name": "Apple Machine Learning Research", "url": "https://machinelearning.apple.com/rss.xml", "enabled": true, "tags": ["vendor", "research"] },
+
+    { "name": "AWS Machine Learning Blog", "url": "https://aws.amazon.com/blogs/machine-learning/feed/", "enabled": true, "tags": ["vendor", "cloud", "engineering"] },
+    { "name": "NVIDIA Developer Blog", "url": "https://developer.nvidia.com/blog/feed/", "enabled": true, "tags": ["vendor", "hardware", "engineering"] },
+    { "name": "NVIDIA Blog (Deep Learning)", "url": "https://blogs.nvidia.com/blog/category/deep-learning/feed/", "enabled": false, "tags": ["vendor", "hardware", "research"] },
+
+    { "name": "Hugging Face Blog", "url": "https://huggingface.co/blog/feed.xml", "enabled": true, "tags": ["vendor", "open-source", "research"] },
+
+    { "name": "Wired (AI tag)", "url": "https://www.wired.com/feed/tag/ai/latest/rss", "enabled": true, "tags": ["media", "analysis"] },
+    { "name": "Ars Technica (AI tag)", "url": "https://arstechnica.com/tag/artificial-intelligence/feed/", "enabled": true, "tags": ["media"] },
+    { "name": "Financial Times (AI)", "url": "https://www.ft.com/rss/artificial-intelligence", "enabled": true, "tags": ["media", "business"] },
+    { "name": "BBC News (Technology)", "url": "https://www.bbc.co.uk/news/technology/rss.xml", "enabled": true, "tags": ["media"] },
+
+    { "name": "TechCrunch (AI tag)", "url": "https://techcrunch.com/tag/artificial-intelligence/feed/", "enabled": true, "tags": ["media", "business", "startup"] },
+    { "name": "VentureBeat (AI)", "url": "https://venturebeat.com/category/ai/feed/", "enabled": true, "tags": ["media", "business"] },
+    { "name": "MIT Technology Review", "url": "https://www.technologyreview.com/feed/", "enabled": true, "tags": ["media", "analysis"] },
+    { "name": "Fast Company (Technology)", "url": "https://www.fastcompany.com/technology/rss", "enabled": false, "tags": ["media"] },
+
+    { "name": "SemiAnalysis", "url": "https://www.semianalysis.com/feed", "enabled": true, "tags": ["analysis", "hardware", "business"] },
+    { "name": "LessWrong (Curated)", "url": "https://www.lesswrong.com/feed.xml?view=curated-rss", "enabled": false, "tags": ["community", "alignment"] },
+
+    { "name": "Hacker News RSS (query: artificial intelligence)", "url": "https://hnrss.org/newest?q=artificial%20intelligence", "enabled": false, "tags": ["community"] },
+
+    { "name": "arXiv (cs.AI)", "url": "https://export.arxiv.org/rss/cs.AI", "enabled": true, "tags": ["research", "papers"] },
+    { "name": "arXiv (cs.LG)", "url": "https://export.arxiv.org/rss/cs.LG", "enabled": true, "tags": ["research", "papers"] },
+    { "name": "Nature (Machine Learning)", "url": "https://www.nature.com/subjects/machine-learning.rss", "enabled": true, "tags": ["research"] },
+    { "name": "ScienceDaily (AI)", "url": "https://www.sciencedaily.com/rss/computers_math/artificial_intelligence.xml", "enabled": false, "tags": ["research", "press"] },
+
+    { "name": "The Verge (All)", "url": "https://www.theverge.com/rss/index.xml", "enabled": false, "tags": ["media"] },
+    { "name": "Reddit r/MachineLearning", "url": "https://www.reddit.com/r/MachineLearning/.rss", "enabled": false, "tags": ["community"] },
+    { "name": "Reddit r/LocalLLaMA", "url": "https://www.reddit.com/r/LocalLLaMA/.rss", "enabled": false, "tags": ["community", "open-source"] }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "accounts": [
+    { "handle": "OpenAI", "label": "OpenAI" },
+    { "handle": "AnthropicAI", "label": "Anthropic" },
+    { "handle": "GoogleDeepMind", "label": "Google DeepMind" },
+    { "handle": "GoogleAI", "label": "Google AI" },
+    { "handle": "huggingface", "label": "Hugging Face" },
+    { "handle": "nvidiaai", "label": "NVIDIA AI" },
+    { "handle": "MetaAI", "label": "Meta AI" },
+    { "handle": "MistralAI", "label": "Mistral AI" },
+    { "handle": "Cohere", "label": "Cohere" },
+    { "handle": "perplexity_ai", "label": "Perplexity" },
+    { "handle": "xai", "label": "xAI" }
+  ],
+  "query_templates": [
+    "site:x.com/{handle} (announce OR launched OR release OR released OR paper OR model OR safety OR policy)",
+    "site:x.com (\"{label}\" OR {handle}) (\"new model\" OR \"open source\" OR \"benchmark\" OR \"agent\" OR \"fine-tuning\")"
+  ],
+  "keywords": [
+    "agent",
+    "agents",
+    "model",
+    "release",
+    "open source",
+    "weights",
+    "benchmark",
+    "safety",
+    "policy",
+    "red team"
+  ]
+}
+

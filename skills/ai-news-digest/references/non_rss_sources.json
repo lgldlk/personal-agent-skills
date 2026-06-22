@@ -1,0 +1,30 @@
+{
+  "sites": [
+    {
+      "name": "Anthropic News",
+      "homepage": "https://www.anthropic.com/news",
+      "search_query": "site:anthropic.com (news OR announcements) (model OR release OR safety OR policy)"
+    },
+    {
+      "name": "Meta AI Blog",
+      "homepage": "https://ai.meta.com/blog/",
+      "search_query": "site:ai.meta.com/blog (model OR release OR llama OR benchmark OR safety)"
+    },
+    {
+      "name": "Mistral News",
+      "homepage": "https://mistral.ai/news/",
+      "search_query": "site:mistral.ai/news (model OR release OR weights OR open source)"
+    },
+    {
+      "name": "xAI",
+      "homepage": "https://x.ai",
+      "search_query": "site:x.ai (blog OR news OR announcement OR release)"
+    },
+    {
+      "name": "Cohere Blog",
+      "homepage": "https://cohere.com/blog",
+      "search_query": "site:cohere.com/blog (model OR release OR benchmark OR open source)"
+    }
+  ]
+}
+
