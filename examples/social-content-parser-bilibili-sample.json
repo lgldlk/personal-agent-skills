@@ -1,0 +1,31 @@
+{
+  "code": 200,
+  "msg": "解析成功！",
+  "data": {
+    "title": "Demo Bilibili video",
+    "cover": "https://example.com/bilibili-cover.jpg",
+    "description": "Demo Bilibili description",
+    "url": "https://example.com/bilibili-main.mp4",
+    "user": {
+      "name": "Demo Bilibili Author",
+      "avatar": "https://example.com/bilibili-avatar.jpg"
+    },
+    "videos": [
+      {
+        "title": "Demo Bilibili video P1",
+        "duration": 120,
+        "durationFormat": "00:02:00",
+        "url": "https://example.com/bilibili-p1.mp4",
+        "index": 1
+      },
+      {
+        "title": "Demo Bilibili video P2",
+        "duration": 30,
+        "durationFormat": "00:00:30",
+        "url": "https://example.com/bilibili-p2.mp4",
+        "index": 2
+      }
+    ],
+    "totalVideos": 2
+  }
+}

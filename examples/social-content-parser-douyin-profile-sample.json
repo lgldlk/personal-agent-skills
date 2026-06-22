@@ -1,0 +1,62 @@
+{
+  "code": 200,
+  "msg": "success",
+  "data": [
+    {
+      "index": 1,
+      "aweme_id": "7587074832588655881",
+      "desc": "12月23日 推荐一款免费的Api宝藏站点",
+      "create_time": "2025-12-23 23:25:30",
+      "share_url": "https://www.douyin.com/video/7587074832588655881",
+      "author": "BugPk",
+      "author_uid": "4167593824902756",
+      "author_sec_uid": "MS4wLjABAAAA24iQuM84Uss_49_SrNxWD3E7IqdO_kM7cATt6Tti25z9Xyts4vPB6JHmgmNlviPN",
+      "type": "video",
+      "cover": "https://example.com/douyin-profile-cover.jpg",
+      "url": "https://example.com/douyin-profile-video.mp4",
+      "music_title": "@BugPk创作的原声",
+      "music_author": "BugPk",
+      "music_url": "https://example.com/douyin-profile-music.mp3",
+      "statistics": {
+        "digg_count": 79,
+        "comment_count": 0,
+        "share_count": 5,
+        "collect_count": 42,
+        "play_count": 1598
+      },
+      "hashtags": []
+    },
+    {
+      "index": 2,
+      "aweme_id": "7465170255401291068",
+      "desc": "金蛇送福，新年快乐！",
+      "create_time": "2025-01-29 11:13:30",
+      "share_url": "https://www.douyin.com/video/7465170255401291068",
+      "author": "BugPk",
+      "author_uid": "4167593824902756",
+      "author_sec_uid": "MS4wLjABAAAA24iQuM84Uss_49_SrNxWD3E7IqdO_kM7cATt6Tti25z9Xyts4vPB6JHmgmNlviPN",
+      "type": "image",
+      "cover": "https://example.com/douyin-profile-image-cover.jpg",
+      "images": [
+        "https://example.com/douyin-profile-image-1.webp"
+      ],
+      "music_title": "过年喜庆音乐（剪辑版2）",
+      "music_author": "E8r",
+      "statistics": {
+        "digg_count": 1,
+        "comment_count": 0,
+        "share_count": 0,
+        "collect_count": 0,
+        "play_count": 46
+      },
+      "hashtags": [
+        "新年快乐恭喜发财",
+        "jiuhunwl"
+      ]
+    }
+  ],
+  "pagination": {
+    "total": 2,
+    "has_more": false
+  }
+}

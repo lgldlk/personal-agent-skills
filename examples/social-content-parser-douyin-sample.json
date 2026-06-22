@@ -1,0 +1,33 @@
+{
+  "code": 200,
+  "msg": "解析成功",
+  "data": {
+    "type": "live",
+    "title": "Demo Douyin live photo",
+    "desc": "#demo #livephoto",
+    "author": {
+      "name": "Demo Douyin Author",
+      "id": 4163189922866003,
+      "avatar": "https://example.com/douyin-avatar.jpg"
+    },
+    "cover": "https://example.com/douyin-cover.webp",
+    "url": null,
+    "video_backup": null,
+    "images": [
+      "https://example.com/douyin-image-1.webp",
+      "https://example.com/douyin-image-2.webp"
+    ],
+    "live_photo": [
+      {
+        "image": "https://example.com/douyin-live-image-1.webp",
+        "video": "https://example.com/douyin-live-video-1.mp4"
+      }
+    ],
+    "music": {
+      "title": "Demo music",
+      "author": "Demo musician",
+      "url": "https://example.com/douyin-music.mp3",
+      "cover": "https://example.com/douyin-music-cover.jpg"
+    }
+  }
+}

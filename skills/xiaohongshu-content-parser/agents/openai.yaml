@@ -1,4 +1,0 @@
-interface:
-  display_name: "Xiaohongshu Content Parser"
-  short_description: "Parse XHS posts into local docs and media."
-  default_prompt: "Use $xiaohongshu-content-parser to parse a public Xiaohongshu share URL, download the media locally, and generate a markdown report."
