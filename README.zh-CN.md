@@ -4,13 +4,14 @@
 
 这是 `lgldlk` 维护的公开个人 Agent Skills 仓库。
 
-这些技能来自真实、反复出现的工作流：API 数据能力调研、小程序 UI 对齐 Figma、Markdown 打包导出，以及多 agent 流水线协作。这个仓库可以作为个人技能库安装，也可以单独查看和复制某一个技能。
+这些技能来自真实、反复出现的工作流：API 数据能力调研、AI 新闻追踪、小程序 UI 对齐 Figma、Markdown 打包导出，以及多 agent 流水线协作。这个仓库可以作为个人技能库安装，也可以单独查看和复制某一个技能。
 
 ## 技能列表
 
 | 技能 | 用途 | 主要产物 |
 |---|---|---|
 | [`api-data-research`](skills/api-data-research/SKILL.md) | 从文档、响应样例、价格页、稳定性和社区信号中对比官方及第三方 API 数据能力。 | 带引用的调研笔记、字段级能力矩阵、PNG 表格导出。 |
+| [`ai-news-digest`](skills/ai-news-digest/SKILL.md) | 从 RSS/Atom、可选 X 和非 RSS 来源、GitHub AI Trending 抓取最新 AI 动态。 | 带日期范围、来源链接和趋势建议的 AI 新闻简报。 |
 | [`agent-pipeline-orchestration`](skills/agent-pipeline-orchestration/SKILL.md) | 把工作拆成非阻塞的多 agent 流水线，包含实现、评审、QA 和下一阶段映射。 | 流水线分工、worker 提示词和集成说明。 |
 | [`miniapp-figma-alignment`](skills/miniapp-figma-alignment/SKILL.md) | 修正或实现小程序、uni-app、Taro 页面，让它们和 Figma 尺寸及平台行为对齐。 | 单位换算判断、实现建议、视觉 QA 清单。 |
 | [`markdown-platform-pack`](skills/markdown-platform-pack/SKILL.md) | 把 Markdown 转成适合导入的 Word 包，先把表格和代码块转成图片。 | `*.tmp.md`、PNG 块图片、`*.docx` 导入文件。 |
@@ -28,6 +29,7 @@ npx skills add lgldlk/lgldlk-agent-skills --list
 
 ```bash
 npx skills add lgldlk/lgldlk-agent-skills --skill api-data-research -g -y
+npx skills add lgldlk/lgldlk-agent-skills --skill ai-news-digest -g -y
 npx skills add lgldlk/lgldlk-agent-skills --skill agent-pipeline-orchestration -g -y
 npx skills add lgldlk/lgldlk-agent-skills --skill miniapp-figma-alignment -g -y
 npx skills add lgldlk/lgldlk-agent-skills --skill markdown-platform-pack -g -y
@@ -39,6 +41,7 @@ npx skills add lgldlk/lgldlk-agent-skills --skill social-content-parser -g -y
 ```bash
 mkdir -p ~/.skills
 cp -R skills/api-data-research ~/.skills/
+cp -R skills/ai-news-digest ~/.skills/
 cp -R skills/agent-pipeline-orchestration ~/.skills/
 cp -R skills/miniapp-figma-alignment ~/.skills/
 cp -R skills/markdown-platform-pack ~/.skills/
@@ -56,6 +59,34 @@ cp -R skills/social-content-parser ~/.skills/
 ![API Data Research 能力矩阵](assets/screenshots/api-data-research-matrix.png)
 
 源示例：[`examples/api-data-research-example.md`](examples/api-data-research-example.md)
+
+### AI News Digest
+
+这个技能会先抓取最新 AI 新闻，再生成简报，避免凭记忆写“最新动态”。默认抓取过去 24 小时；如果用户指定今天、本周或过去 72 小时，也可以调整时间窗口。
+
+命令：
+
+```bash
+python3 skills/ai-news-digest/scripts/fetch_ai_news.py \
+  --since 24h --limit 0 --max-per-source 0 --format md --output ./ai-news.md
+```
+
+可选抓取 GitHub AI Trending：
+
+```bash
+python3 skills/ai-news-digest/scripts/fetch_github_ai_trending.py \
+  --since daily --limit 0 --format md --output ./github-ai.md
+```
+
+结果结构：
+
+```text
+AI News Digest (<日期范围>)
+- 新闻标题、来源、日期、链接
+- 发生了什么，以及为什么重要
+
+趋势与建议
+```
 
 ### Miniapp Figma Alignment
 
@@ -143,6 +174,7 @@ lgldlk-agent-skills/
 ├── skills/
 │   ├── index.json
 │   ├── api-data-research/
+│   ├── ai-news-digest/
 │   ├── agent-pipeline-orchestration/
 │   ├── markdown-platform-pack/
 │   ├── miniapp-figma-alignment/

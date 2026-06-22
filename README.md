@@ -4,13 +4,14 @@
 
 A public collection of reusable agent skills maintained by `lgldlk`.
 
-These skills come from recurring real workflows: researching API data access, aligning mini-program UI with Figma, packaging Markdown for platform import, and orchestrating multi-agent work. The repository is designed as a personal skill library, while keeping every skill inspectable and installable on its own.
+These skills come from recurring real workflows: researching API data access, following AI news, aligning mini-program UI with Figma, packaging Markdown for platform import, and orchestrating multi-agent work. The repository is designed as a personal skill library, while keeping every skill inspectable and installable on its own.
 
 ## Skills
 
 | Skill | Purpose | Main output |
 |---|---|---|
 | [`api-data-research`](skills/api-data-research/SKILL.md) | Compare official and third-party API data access from docs, response examples, pricing pages, and stability signals. | Cited research notes, field-level capability matrices, PNG table exports. |
+| [`ai-news-digest`](skills/ai-news-digest/SKILL.md) | Fetch current AI news from RSS/Atom feeds, optional X and non-RSS sources, and GitHub AI trending. | Dated AI news digest with links, source window, and trend notes. |
 | [`agent-pipeline-orchestration`](skills/agent-pipeline-orchestration/SKILL.md) | Manage work as a non-blocking multi-agent pipeline with bounded implementation, review, QA, and mapping lanes. | Lane planning, worker prompts, and integration guidance. |
 | [`miniapp-figma-alignment`](skills/miniapp-figma-alignment/SKILL.md) | Implement or fix mini-program, uni-app, or Taro screens so they match Figma dimensions and platform behavior. | Unit conversion decisions, implementation guidance, visual QA checklist. |
 | [`markdown-platform-pack`](skills/markdown-platform-pack/SKILL.md) | Convert Markdown into import-safe Word output by rasterizing unsupported tables and code blocks first. | `*.tmp.md`, PNG block images, `*.docx` import files. |
@@ -28,6 +29,7 @@ Install a specific skill:
 
 ```bash
 npx skills add lgldlk/lgldlk-agent-skills --skill api-data-research -g -y
+npx skills add lgldlk/lgldlk-agent-skills --skill ai-news-digest -g -y
 npx skills add lgldlk/lgldlk-agent-skills --skill agent-pipeline-orchestration -g -y
 npx skills add lgldlk/lgldlk-agent-skills --skill miniapp-figma-alignment -g -y
 npx skills add lgldlk/lgldlk-agent-skills --skill markdown-platform-pack -g -y
@@ -39,6 +41,7 @@ Manual install:
 ```bash
 mkdir -p ~/.skills
 cp -R skills/api-data-research ~/.skills/
+cp -R skills/ai-news-digest ~/.skills/
 cp -R skills/agent-pipeline-orchestration ~/.skills/
 cp -R skills/miniapp-figma-alignment ~/.skills/
 cp -R skills/markdown-platform-pack ~/.skills/
@@ -56,6 +59,34 @@ This skill produces evidence-backed API comparisons instead of relying on vendor
 ![API Data Research capability matrix](assets/screenshots/api-data-research-matrix.png)
 
 Source example: [`examples/api-data-research-example.md`](examples/api-data-research-example.md)
+
+### AI News Digest
+
+This skill fetches current AI news before writing a digest, instead of relying on memory. It defaults to the past 24 hours, but can use any requested window such as today, this week, or the past 72 hours.
+
+Command:
+
+```bash
+python3 skills/ai-news-digest/scripts/fetch_ai_news.py \
+  --since 24h --limit 0 --max-per-source 0 --format md --output ./ai-news.md
+```
+
+Optional GitHub AI trending:
+
+```bash
+python3 skills/ai-news-digest/scripts/fetch_github_ai_trending.py \
+  --since daily --limit 0 --format md --output ./github-ai.md
+```
+
+Result shape:
+
+```text
+AI News Digest (<date range>)
+- item title, source, date, link
+- what happened and why it matters
+
+Trends and recommendations
+```
 
 ### Miniapp Figma Alignment
 
@@ -159,6 +190,7 @@ lgldlk-agent-skills/
 ├── skills/
 │   ├── index.json
 │   ├── api-data-research/
+│   ├── ai-news-digest/
 │   ├── agent-pipeline-orchestration/
 │   ├── markdown-platform-pack/
 │   ├── miniapp-figma-alignment/

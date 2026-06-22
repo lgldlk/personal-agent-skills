@@ -54,13 +54,13 @@ def _strip_html(text: str) -> str:
     return text
 
 
-def _http_get(url: str, timeout_s: int, token: Optional[str] = None, accept: str = "application/vnd.github+json") -> tuple[int, dict[str, str], bytes]:
+def _http_get(url: str, timeout_s: int, auth_value: Optional[str] = None, accept: str = "application/vnd.github+json") -> tuple[int, dict[str, str], bytes]:
     headers = {
         "User-Agent": "ai-news-digest/0.1",
         "Accept": accept,
     }
-    if token:
-        headers["Authorization"] = f"Bearer {token}"
+    if auth_value:
+        headers["Authorization"] = f"Bearer {auth_value}"
     req = urllib.request.Request(url, headers=headers)
     with urllib.request.urlopen(req, timeout=timeout_s) as resp:
         body = resp.read()
@@ -68,8 +68,8 @@ def _http_get(url: str, timeout_s: int, token: Optional[str] = None, accept: str
         return resp.status, headers_out, body
 
 
-def _http_get_json(url: str, timeout_s: int, token: Optional[str] = None, accept: str = "application/vnd.github+json") -> Any:
-    status, headers_out, body = _http_get(url, timeout_s=timeout_s, token=token, accept=accept)
+def _http_get_json(url: str, timeout_s: int, auth_value: Optional[str] = None, accept: str = "application/vnd.github+json") -> Any:
+    status, headers_out, body = _http_get(url, timeout_s=timeout_s, auth_value=auth_value, accept=accept)
     if status < 200 or status >= 300:
         raise RuntimeError(f"HTTP {status} for {url}")
     try:
@@ -138,50 +138,50 @@ def _parse_trending(html_bytes: bytes, since: str, limit: int) -> list[TrendingR
     return out
 
 
-def _get_repo_details(full_name: str, timeout_s: int, token: Optional[str]) -> dict[str, Any]:
+def _get_repo_details(full_name: str, timeout_s: int, auth_value: Optional[str]) -> dict[str, Any]:
     owner, repo = full_name.split("/", 1)
     url = f"https://api.github.com/repos/{urllib.parse.quote(owner)}/{urllib.parse.quote(repo)}"
-    return _http_get_json(url, timeout_s=timeout_s, token=token)
+    return _http_get_json(url, timeout_s=timeout_s, auth_value=auth_value)
 
-def _get_repo_topics(full_name: str, timeout_s: int, token: Optional[str]) -> list[str]:
+def _get_repo_topics(full_name: str, timeout_s: int, auth_value: Optional[str]) -> list[str]:
     owner, repo = full_name.split("/", 1)
     url = f"https://api.github.com/repos/{urllib.parse.quote(owner)}/{urllib.parse.quote(repo)}/topics"
     # Topics historically required a preview accept header; keep it for compatibility.
     data = _http_get_json(
         url,
         timeout_s=timeout_s,
-        token=token,
+        auth_value=auth_value,
         accept="application/vnd.github+json, application/vnd.github.mercy-preview+json",
     )
     names = data.get("names") or []
     return [n for n in names if isinstance(n, str)]
 
 
-def _get_community_profile(full_name: str, timeout_s: int, token: Optional[str]) -> Optional[dict[str, Any]]:
+def _get_community_profile(full_name: str, timeout_s: int, auth_value: Optional[str]) -> Optional[dict[str, Any]]:
     owner, repo = full_name.split("/", 1)
     url = f"https://api.github.com/repos/{urllib.parse.quote(owner)}/{urllib.parse.quote(repo)}/community/profile"
     try:
         # Should work with modern accept headers; if not, return None gracefully.
-        return _http_get_json(url, timeout_s=timeout_s, token=token)
+        return _http_get_json(url, timeout_s=timeout_s, auth_value=auth_value)
     except Exception:
         return None
 
 
-def _search_issues_count(query: str, timeout_s: int, token: Optional[str]) -> Optional[int]:
+def _search_issues_count(query: str, timeout_s: int, auth_value: Optional[str]) -> Optional[int]:
     url = "https://api.github.com/search/issues?" + urllib.parse.urlencode({"q": query, "per_page": 1})
     try:
-        data = _http_get_json(url, timeout_s=timeout_s, token=token)
+        data = _http_get_json(url, timeout_s=timeout_s, auth_value=auth_value)
         return int(data.get("total_count", 0))
     except Exception:
         return None
 
 
-def _search_top_issues(full_name: str, since_date: str, timeout_s: int, token: Optional[str], limit: int = 3) -> list[dict[str, Any]]:
+def _search_top_issues(full_name: str, since_date: str, timeout_s: int, auth_value: Optional[str], limit: int = 3) -> list[dict[str, Any]]:
     query = f"repo:{full_name} is:issue created:>={since_date}"
     params = {"q": query, "sort": "comments", "order": "desc", "per_page": limit}
     url = "https://api.github.com/search/issues?" + urllib.parse.urlencode(params)
     try:
-        data = _http_get_json(url, timeout_s=timeout_s, token=token)
+        data = _http_get_json(url, timeout_s=timeout_s, auth_value=auth_value)
         items = data.get("items", []) or []
         out = []
         for it in items[:limit]:
@@ -279,14 +279,14 @@ def main(argv: list[str]) -> int:
     parser.add_argument("--no-feedback", action="store_true", help="Skip issue/PR feedback endpoints (faster, fewer API calls)")
     args = parser.parse_args(argv)
 
-    token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
+    auth_value = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
     now = _now_utc()
     since_date = (now - timedelta(days=max(1, args.window_days))).date().isoformat()
 
     # Fetch trending HTML (no API key needed)
     lang_path = f"/trending/{urllib.parse.quote(args.language)}" if args.language else "/trending"
     trending_url = f"https://github.com{lang_path}?{urllib.parse.urlencode({'since': args.since})}"
-    status, _, html_bytes = _http_get(trending_url, timeout_s=args.timeout, token=None, accept="text/html,application/xhtml+xml")
+    status, _, html_bytes = _http_get(trending_url, timeout_s=args.timeout, auth_value=None, accept="text/html,application/xhtml+xml")
     if status != 200:
         print(f"error: trending fetch failed HTTP {status}", file=sys.stderr)
         return 2
@@ -332,7 +332,7 @@ def main(argv: list[str]) -> int:
         remaining.sort(key=lambda r: (r.stars_delta or 0, r.stars or 0), reverse=True)
         for r in remaining:
             try:
-                names = _get_repo_topics(r.full_name, timeout_s=args.timeout, token=token)
+                names = _get_repo_topics(r.full_name, timeout_s=args.timeout, auth_value=auth_value)
                 if any(n in topics_allow for n in names):
                     ai_candidates.append(r)
             except Exception:
@@ -357,7 +357,7 @@ def main(argv: list[str]) -> int:
             params = {"q": q, "sort": "stars", "order": "desc", "per_page": min(need, 10)}
             url = "https://api.github.com/search/repositories?" + urllib.parse.urlencode(params)
             try:
-                data = _http_get_json(url, timeout_s=args.timeout, token=token)
+                data = _http_get_json(url, timeout_s=args.timeout, auth_value=auth_value)
                 items = data.get("items") or []
                 for it in items:
                     full = it.get("full_name")
@@ -397,7 +397,7 @@ def main(argv: list[str]) -> int:
             "trending": dataclasses.asdict(r),
         }
         try:
-            details = _get_repo_details(r.full_name, timeout_s=args.timeout, token=token)
+            details = _get_repo_details(r.full_name, timeout_s=args.timeout, auth_value=auth_value)
             for k in [
                 "html_url",
                 "stargazers_count",
@@ -418,7 +418,7 @@ def main(argv: list[str]) -> int:
             failures.append({"repo": r.full_name, "error": f"{type(e).__name__}: {e}"})
 
         if not args.no_profile:
-            prof = _get_community_profile(r.full_name, timeout_s=args.timeout, token=token)
+            prof = _get_community_profile(r.full_name, timeout_s=args.timeout, auth_value=auth_value)
             if prof is not None:
                 row["community_profile"] = {
                     "health_percentage": prof.get("health_percentage"),
@@ -430,12 +430,12 @@ def main(argv: list[str]) -> int:
 
         if not args.no_feedback:
             fb: dict[str, Any] = {}
-            fb["open_prs"] = _search_issues_count(f"repo:{r.full_name} is:pr is:open", timeout_s=args.timeout, token=token)
-            fb["open_issues_30d"] = _search_issues_count(f"repo:{r.full_name} is:issue is:open created:>={since_date}", timeout_s=args.timeout, token=token)
-            fb["closed_issues_30d"] = _search_issues_count(f"repo:{r.full_name} is:issue closed:>={since_date}", timeout_s=args.timeout, token=token)
-            fb["good_first_issue_open"] = _search_issues_count(f"repo:{r.full_name} is:issue is:open label:\"good first issue\"", timeout_s=args.timeout, token=token)
-            fb["help_wanted_open"] = _search_issues_count(f"repo:{r.full_name} is:issue is:open label:\"help wanted\"", timeout_s=args.timeout, token=token)
-            fb["top_issues_30d"] = _search_top_issues(r.full_name, since_date=since_date, timeout_s=args.timeout, token=token, limit=3)
+            fb["open_prs"] = _search_issues_count(f"repo:{r.full_name} is:pr is:open", timeout_s=args.timeout, auth_value=auth_value)
+            fb["open_issues_30d"] = _search_issues_count(f"repo:{r.full_name} is:issue is:open created:>={since_date}", timeout_s=args.timeout, auth_value=auth_value)
+            fb["closed_issues_30d"] = _search_issues_count(f"repo:{r.full_name} is:issue closed:>={since_date}", timeout_s=args.timeout, auth_value=auth_value)
+            fb["good_first_issue_open"] = _search_issues_count(f"repo:{r.full_name} is:issue is:open label:\"good first issue\"", timeout_s=args.timeout, auth_value=auth_value)
+            fb["help_wanted_open"] = _search_issues_count(f"repo:{r.full_name} is:issue is:open label:\"help wanted\"", timeout_s=args.timeout, auth_value=auth_value)
+            fb["top_issues_30d"] = _search_top_issues(r.full_name, since_date=since_date, timeout_s=args.timeout, auth_value=auth_value, limit=3)
             row["feedback"] = fb
 
         results.append(row)
